@@ -5,9 +5,9 @@ const { getOffset, getLimit, createPage } = require('../utils/page');
 const Pokemon = {
   evolutions(pokemon) {
     const query = `
-      SELECT p.* FROM pokemon AS p
+      SELECT p.*, e.tier FROM pokemon AS p
       JOIN evolution as e ON e.id = p.evolution_id
-      WHERE e.tier = $1
+      WHERE e.tier = (SELECT e.tier FROM evolution AS e WHERE e.chain = $1)
     `;
 
     return db.query(query, [pokemon.id]).then((res) => res.rows);
